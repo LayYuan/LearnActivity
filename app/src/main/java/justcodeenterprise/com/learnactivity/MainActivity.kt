@@ -1,5 +1,6 @@
 package justcodeenterprise.com.learnactivity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -32,6 +33,26 @@ class MainActivity : AppCompatActivity() {
         //5 You add an empty OnItemClickListener() to the ListView to capture the user’s taps on individual list entries.
         // The listener is a Kotlin lambda.
         taskListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id -> }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        // 1 You check the requestCode to ensure the activity result is indeed for your add task request you started with
+        // TaskDescriptionActivity.
+        if (requestCode == ADD_TASK_REQUEST) {
+            // 2 You make sure the resultCode is RESULT_OK — the standard activity result for a successful operation.
+            if (resultCode == Activity.RESULT_OK) {
+                // 3 Here you extract the task description from the result intent and, after a null check with the let function,
+                // add it to your list.
+                val task = data?.getStringExtra(TaskDescriptionActivity.EXTRA_TASK_DESCRIPTION)
+                task?.let {
+                    taskList.add(task)
+                    // 4 Finally, you call notifyDataSetChanged() on your list adapter. In turn, it notifies the ListView
+                    // about changes in your data model so it can trigger a refresh of its view.
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
     }
 
     //6 An empty on-click method for the “ADD A TASK” button, designated by the activity_main.xml layout.
