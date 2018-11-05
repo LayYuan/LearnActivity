@@ -1,5 +1,6 @@
 package justcodeenterprise.com.learnactivity
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -13,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     private val taskList = mutableListOf<String>()
     private val adapter by lazy { makeAdapter(taskList) }
 
+    private val ADD_TASK_REQUEST = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -34,6 +36,12 @@ class MainActivity : AppCompatActivity() {
 
     //6 An empty on-click method for the “ADD A TASK” button, designated by the activity_main.xml layout.
     fun addTaskClicked(view: View) {
+
+        //When the user taps the “ADD A TASK” button, the Android OS calls addTaskClicked(). Here you create an Intent
+        // to launch the TaskDescriptionActivity from MainActivity.
+
+        val intent = Intent(this, TaskDescriptionActivity::class.java)
+        startActivityForResult(intent, ADD_TASK_REQUEST)
 
     }
 
