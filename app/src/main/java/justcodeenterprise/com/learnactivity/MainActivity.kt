@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
 
     private val tickReceiver by lazy { makeBroadcastReceiver() }
 
+    private val PREFS_TASKS = "prefs_tasks"
+    private val KEY_TASKS_LIST = "tasks_list"
+
     companion object {
         private const val LOG_TAG = "MainActivityLog"
 
@@ -51,6 +54,14 @@ class MainActivity : AppCompatActivity() {
         //5 You add an empty OnItemClickListener() to the ListView to capture the user’s taps on individual list entries.
         // The listener is a Kotlin lambda.
         taskListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id -> }
+
+
+        //Retrieve save data
+        val savedList = getSharedPreferences(PREFS_TASKS, Context.MODE_PRIVATE).getString(KEY_TASKS_LIST, null)
+        if (savedList != null) {
+            val items = savedList.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            taskList.addAll(items)
+        }
     }
 
     override fun onResume() {
@@ -72,6 +83,21 @@ class MainActivity : AppCompatActivity() {
         } catch (e: IllegalArgumentException) {
             Log.e(MainActivity.LOG_TAG, "Time tick Receiver not registered", e)
         }
+    }
+
+    //Persist task
+    override fun onStop() {
+        super.onStop()
+
+        // Save all data which you want to persist.
+        val savedList = StringBuilder()
+        for (task in taskList) {
+            savedList.append(task)
+            savedList.append(",")
+        }
+
+        getSharedPreferences(PREFS_TASKS, Context.MODE_PRIVATE).edit()
+            .putString(KEY_TASKS_LIST, savedList.toString()).apply()
     }
 
 
