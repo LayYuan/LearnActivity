@@ -5,7 +5,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
@@ -53,7 +55,10 @@ class MainActivity : AppCompatActivity() {
 
         //5 You add an empty OnItemClickListener() to the ListView to capture the user’s taps on individual list entries.
         // The listener is a Kotlin lambda.
-        taskListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id -> }
+        //taskListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id -> }
+        taskListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            taskSelected(position)
+        }
 
 
         //Retrieve save data
@@ -98,6 +103,10 @@ class MainActivity : AppCompatActivity() {
 
         getSharedPreferences(PREFS_TASKS, Context.MODE_PRIVATE).edit()
             .putString(KEY_TASKS_LIST, savedList.toString()).apply()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
     }
 
 
@@ -148,5 +157,27 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+
+    //Delete item
+    private fun taskSelected(position: Int) {
+        // 1
+        AlertDialog.Builder(this)
+            // 2
+            .setTitle(R.string.alert_title)
+            // 3
+            .setMessage(taskList[position])
+            .setPositiveButton(R.string.delete, { _, _ ->
+                taskList.removeAt(position)
+                adapter.notifyDataSetChanged()
+            })
+            .setNegativeButton(R.string.cancel, {
+                    dialog, _ -> dialog.cancel()
+            })
+            // 4
+            .create()
+            // 5
+            .show()
     }
 }
